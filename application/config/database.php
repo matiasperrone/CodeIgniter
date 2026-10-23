@@ -17,10 +17,10 @@
 |	['password'] The password used to connect to the database
 |	['database'] The name of the database you want to connect to
 |	['dbdriver'] The database type. ie: mysqli.  Currently supported:
-				 mysqli, postgre, odbc, sqlsrv, pdo, oci8, cubrid, and (PHP 5 only,
-				 their extensions were removed in PHP 7) mysql, mssql, sqlite.
-				 'mysql' falls back to mysqli, and 'mssql' to sqlsrv, when their
-				 extension is missing.
+				 mysqli, postgre, odbc, sqlsrv, sqlite3, pdo, oci8, cubrid, and
+				 (their PHP extensions were removed in PHP 5.4 / 7) mysql, mssql, sqlite.
+				 'mysql' falls back to mysqli, 'mssql' to sqlsrv and 'sqlite' to
+				 sqlite3, when their extension is missing.
 |	['dbprefix'] You can add an optional prefix, which will be added
 |				 to the table name when using the  Active Record class
 |	['pconnect'] TRUE/FALSE - Whether to use a persistent connection

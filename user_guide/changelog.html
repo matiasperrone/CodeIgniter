@@ -72,6 +72,7 @@ Change Log
 			<li>Marked the framework classes with <samp>#[\AllowDynamicProperties]</samp> for PHP 8.2+.</li>
 			<li>Changed the default <kbd>dbdriver</kbd> to <kbd>mysqli</kbd>; <kbd>mysql</kbd> now falls back to it when the extension is missing, and <kbd>mssql</kbd> falls back to <kbd>sqlsrv</kbd>.</li>
 			<li>Fixed the <kbd>sqlsrv</kbd> driver's <samp>db_pconnect()</samp>, which did not return the connection.</li>
+			<li>Added a <kbd>sqlite3</kbd> database driver, the SQLite driver rewritten for the <samp>SQLite3</samp> class (with working batch inserts/updates, forge and column listing); <kbd>sqlite</kbd> falls back to it when the SQLite 2 extension is missing.</li>
 		</ul>
 	</li>
 	<li><b>Libraries</b>

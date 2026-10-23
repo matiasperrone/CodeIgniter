@@ -36,12 +36,14 @@ test('database: the factory resolves every bundled driver class without connecti
 	$CI = get_instance();
 	// 'mysql' resolves to mysqli when the removed mysql extension is missing (PHP 7+)
 	$mysql_driver = function_exists('mysql_connect') ? 'mysql' : 'mysqli';
+	// 'sqlite' resolves to sqlite3 when the removed SQLite 2 extension is missing and SQLite3 is available
+	$sqlite_driver = (function_exists('sqlite_open') OR ! class_exists('SQLite3')) ? 'sqlite' : 'sqlite3';
 	// 'mssql' resolves to sqlsrv when the removed mssql extension is missing and sqlsrv is installed
 	$mssql_driver = (function_exists('mssql_connect') OR ! function_exists('sqlsrv_connect')) ? 'mssql' : 'sqlsrv';
 	$expected = array(
 		'mysql' => 'CI_DB_'.$mysql_driver.'_driver', 'mysqli' => 'CI_DB_mysqli_driver', 'postgre' => 'CI_DB_postgre_driver',
 		'odbc' => 'CI_DB_odbc_driver', 'mssql' => 'CI_DB_'.$mssql_driver.'_driver',
-		'sqlsrv' => 'CI_DB_sqlsrv_driver', 'sqlite' => 'CI_DB_sqlite_driver', 'pdo' => 'CI_DB_pdo_driver',
+		'sqlsrv' => 'CI_DB_sqlsrv_driver', 'sqlite' => 'CI_DB_'.$sqlite_driver.'_driver', 'pdo' => 'CI_DB_pdo_driver',
 	);
 	foreach ($expected as $driver => $class)
 	{
@@ -51,7 +53,7 @@ test('database: the factory resolves every bundled driver class without connecti
 			'stricton' => FALSE), TRUE);
 		assert_instance($class, $db, $driver);
 		assert_instance('CI_DB_active_record', $db, $driver);
-		$resolved = array('mysql' => $mysql_driver, 'mssql' => $mssql_driver);
+		$resolved = array('mysql' => $mysql_driver, 'mssql' => $mssql_driver, 'sqlite' => $sqlite_driver);
 		assert_same(isset($resolved[$driver]) ? $resolved[$driver] : $driver, $db->dbdriver, $driver);
 	}
 });

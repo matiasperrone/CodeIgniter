@@ -19,16 +19,17 @@
 		"php": ">=5.6"
 	},
 	"suggest": {
+		"ext-curl": "Trackback and XML-RPC client over HTTP",
+		"ext-gd": "Image manipulation and CAPTCHA generation",
 		"ext-mbstring": "Needed for multi-byte string handling (UTF-8 support)",
-		"ext-openssl": "Encryption class backend when mcrypt is not available",
 		"ext-mcrypt": "Needed to read data encrypted with the Encryption class' default (rijndael-256) cipher",
 		"ext-mysqli": "MySQL / MariaDB database driver",
-		"ext-pgsql": "PostgreSQL database driver",
+		"ext-openssl": "Encryption class backend when mcrypt is not available",
 		"ext-pdo": "PDO database driver",
+		"ext-pgsql": "PostgreSQL database driver",
+		"ext-sqlite3": "SQLite database driver (sqlite3)",
 		"ext-sqlsrv": "Microsoft SQL Server database driver",
-		"ext-gd": "Image manipulation and CAPTCHA generation",
 		"ext-xml": "XML-RPC library",
-		"ext-curl": "Trackback and XML-RPC client over HTTP",
 		"ext-zip": "Reading archives created by the Zip library back (used by the test suite)"
 	},
 	"config": {

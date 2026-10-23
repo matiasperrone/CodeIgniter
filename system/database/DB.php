@@ -116,6 +116,14 @@ function &DB($params = '', $active_record_override = NULL)
 		$params['dbdriver'] = 'mysqli';
 	}
 
+	// And for the sqlite (SQLite 2) extension, removed in PHP 5.4: use sqlite3, the same
+	// driver written for the SQLite3 class. NOTE: SQLite 2 database files are not readable
+	// by SQLite 3, they have to be converted (see the 2.3.0 upgrade notes).
+	if ($params['dbdriver'] == 'sqlite' && ! function_exists('sqlite_open') && class_exists('SQLite3'))
+	{
+		$params['dbdriver'] = 'sqlite3';
+	}
+
 	// Same for the mssql extension (removed in PHP 7.0): use sqlsrv, its successor.
 	// The old "host:port" notation is "host,port" for sqlsrv.
 	if ($params['dbdriver'] == 'mssql' && ! function_exists('mssql_connect') && function_exists('sqlsrv_connect'))
@@ -165,7 +173,7 @@ function &DB($params = '', $active_record_override = NULL)
 
 	if ($DB->autoinit == TRUE)
 	{
-		// Extensions PHP has dropped (mssql: 7.0, sqlite2: 5.4): say so instead of a fatal error
+		// Extensions PHP has dropped (mssql: 7.0, sqlite2: 5.4) and that have no replacement installed: say so instead of a fatal error
 		$removed = array('mssql' => array('mssql_connect', 'sqlsrv'), 'sqlite' => array('sqlite_open', 'pdo (with an sqlite DSN)'));
 		if (isset($removed[$params['dbdriver']]) && ! function_exists($removed[$params['dbdriver']][0]))
 		{

@@ -91,10 +91,32 @@ $config['encryption_driver'] = 'auto';</code>
 	<li>A configuration that says <kbd>'dbdriver' => 'mssql'</kbd> now uses <kbd>sqlsrv</kbd> when the mssql extension is missing and the
 	<a href="http://php.net/sqlsrv">sqlsrv</a> extension (Microsoft's PECL package, which also needs the Microsoft ODBC driver on Linux) is installed.
 	A <kbd>host:port</kbd> hostname is rewritten to the <kbd>host,port</kbd> form sqlsrv expects.</li>
-	<li>Selecting <kbd>mssql</kbd> without either extension, or <kbd>sqlite</kbd> without its extension, stops with a message pointing to <kbd>sqlsrv</kbd> / <kbd>pdo</kbd>, instead of a fatal error.</li>
+	<li>A configuration that says <kbd>'dbdriver' => 'sqlite'</kbd> now uses the new <kbd>sqlite3</kbd> driver when the SQLite 2 extension (removed in PHP 5.4) is missing and the
+	<samp>SQLite3</samp> class is available. <kbd>sqlite3</kbd> can also be selected directly. See Step 3b for what differs.</li>
+	<li>Selecting <kbd>mssql</kbd> without either extension, or <kbd>sqlite</kbd> without either, stops with a message pointing to <kbd>sqlsrv</kbd> / <kbd>pdo</kbd>, instead of a fatal error.</li>
 	<li>The <kbd>sqlsrv</kbd> driver's persistent connection (<kbd>pconnect = TRUE</kbd>) never returned the connection and so always failed. It does now.</li>
 	<li>The <kbd>pdo</kbd> driver now really sets <kbd>PDO::ERRMODE_SILENT</kbd> (the option was ignored before). PHP 8 throws exceptions by default, so without this fix a failed query would throw
 	instead of returning <kbd>FALSE</kbd> as it always did on PHP 5/7.</li>
+</ul>
+
+<h2>Step 3b: The sqlite3 driver</h2>
+
+<p><kbd>system/database/drivers/sqlite3/</kbd> is the SQLite driver rewritten on top of the <samp>SQLite3</samp> class (driver, result, forge and utility). The <kbd>database</kbd>
+setting is the path of the database file, or <kbd>:memory:</kbd>; the file is created when it does not exist. Persistent connections do not exist for this extension, so <kbd>pconnect</kbd> behaves like a normal connection.</p>
+
+<p class="important"><strong>SQLite 2 database files cannot be opened by SQLite 3.</strong> If your application used the old extension, convert the file once:
+<samp>sqlite old.db .dump | sqlite3 new.db</samp>, then point <kbd>database</kbd> at the new file.</p>
+
+<p>Differences from the SQLite 2 driver, all of them bug fixes or things SQLite 3 added:</p>
+
+<ul>
+	<li><kbd>insert_batch()</kbd>, <kbd>update_batch()</kbd> and <kbd>replace()</kbd> work (the old driver did not implement them), and <kbd>list_fields()</kbd> / <kbd>field_exists()</kbd> work.</li>
+	<li><kbd>list_tables()</kbd> no longer returns SQLite's internal <samp>sqlite_*</samp> tables (such as <samp>sqlite_sequence</samp>), and its prefix limit works.</li>
+	<li><kbd>escape_like_str()</kbd> no longer escapes its own escape character twice (<samp>50%</samp> was turned into <samp>50!!%</samp>, so <kbd>like()</kbd> never matched a wildcard).</li>
+	<li>DB Forge generates SQLite 3 syntax: an <kbd>auto_increment</kbd> field becomes <samp>INTEGER PRIMARY KEY AUTOINCREMENT</samp>, <kbd>create_table()</kbd> honours <kbd>IF NOT EXISTS</kbd>,
+	<kbd>drop_table()</kbd> works, <kbd>add_column()</kbd> uses <samp>ADD COLUMN</samp> (a new <samp>NOT NULL</samp> column without a default is added as nullable, as SQLite requires) and <kbd>drop_column()</kbd> works
+	on SQLite 3.35+. <kbd>modify_column()</kbd> is not possible in SQLite and returns <kbd>FALSE</kbd>. Keys added with <kbd>add_key()</kbd> are <samp>UNIQUE</samp> constraints, as before.</li>
+	<li><kbd>$this->dbutil->list_databases()</kbd> failed with a notice; <kbd>optimize_table()</kbd>, <kbd>repair_table()</kbd> and <kbd>backup()</kbd> remain unsupported, as in the old driver.</li>
 </ul>
 
 <h2>Step 4: Encryption class</h2>
