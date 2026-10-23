@@ -21,7 +21,7 @@ date_default_timezone_set('UTC');
 $GLOBALS['__boot_diag'] = array();
 function _boot_error_handler($no, $str, $file, $line)
 {
-	if ($no === 2048 OR error_reporting() === 0) // 2048 = E_STRICT (constant deprecated in 8.4)
+	if ($no === 2048 OR ! (error_reporting() & $no)) // 2048 = E_STRICT (constant deprecated in 8.4); the 2nd test honours @
 	{
 		return TRUE;
 	}

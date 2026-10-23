@@ -32,9 +32,9 @@ function _test_error_handler($no, $str, $file, $line)
 	{
 		return TRUE;
 	}
-	if (error_reporting() === 0)
+	if ( ! (error_reporting() & $no))
 	{
-		// suppressed with @
+		// suppressed with @ (PHP < 8 sets error_reporting() to 0, PHP 8 keeps only fatal levels)
 		return TRUE;
 	}
 	$GLOBALS['__diag'][] = _test_error_label($no).': '.$str.' in '.str_replace(ROOT_PATH, '', $file).':'.$line;
