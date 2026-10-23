@@ -58,6 +58,31 @@ Change Log
 <h1>Change Log</h1>
 
 
+<h2>Version 2.3.0</h2>
+<p>Release Date: Not Released</p>
+
+<ul>
+	<li><b>General Changes</b>
+		<ul>
+			<li>Added support for PHP 7 and PHP 8 up to 8.5 while keeping PHP 5.6 working. See the <a href="installation/upgrade_230.html">upgrade notes</a>.</li>
+			<li>Added a <kbd>composer.json</kbd> and a <kbd>$config['composer_autoload']</kbd> option, so the framework can be installed as a Composer project and use Composer packages.</li>
+			<li>Added a dependency free test suite (<kbd>tests/</kbd>) that runs on PHP 5.6 through 8.5.</li>
+			<li>Added <kbd>system/core/compat/random_bytes.php</kbd>, a <samp>random_bytes()</samp> polyfill for PHP 5.x.</li>
+			<li>Removed the usage of <samp>each()</samp>, <samp>strftime()</samp>, <samp>xml_set_object()</samp>, <samp>xml_parser_free()</samp> and of the <samp>MCRYPT_*</samp> constants, which were removed or deprecated in PHP 7/8.</li>
+			<li>Marked the framework classes with <samp>#[\AllowDynamicProperties]</samp> for PHP 8.2+.</li>
+			<li>Changed the default <kbd>dbdriver</kbd> to <kbd>mysqli</kbd>; <kbd>mysql</kbd> now falls back to it when the extension is missing.</li>
+		</ul>
+	</li>
+	<li><b>Libraries</b>
+		<ul>
+			<li>Added a choice of backend (<kbd>$config['encryption_driver']</kbd>: <kbd>auto</kbd>, <kbd>mcrypt</kbd>, <kbd>openssl</kbd>) to the <a href="libraries/encryption.html">Encryption Library</a>.</li>
+			<li>Fixed <a href="libraries/xmlrpc.html">XML-RPC Library</a> <samp>iso8601_encode()</samp> and its parser on PHP 8.</li>
+			<li>Fixed <a href="libraries/zip.html">Zip Encoding Class</a> file modification times, <a href="libraries/unit_testing.html">Unit Testing Class</a> reports on PHP 8 and the <a href="database/index.html">PDO driver</a> error mode.</li>
+			<li>Added the <kbd>word_length</kbd> option to <a href="helpers/captcha_helper.html">CAPTCHA Helper</a> <samp>create_captcha()</samp> and fixed an endless loop on PHP below 7.</li>
+		</ul>
+	</li>
+</ul>
+
 <h2>Version 2.2.6</h2>
 <p>Release Date: October 31, 2015</p>
 

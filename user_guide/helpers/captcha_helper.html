@@ -97,6 +97,7 @@ CAPTCHA Helper
 &nbsp;&nbsp;&nbsp;&nbsp;'img_path'	 => './captcha/',<br />
 &nbsp;&nbsp;&nbsp;&nbsp;'img_url'	 => 'http://example.com/captcha/',<br />
 &nbsp;&nbsp;&nbsp;&nbsp;'font_path'	 => './path/to/fonts/texb.ttf',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;'word_length'	 => 8,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;'img_width'	 => '150',<br />
 &nbsp;&nbsp;&nbsp;&nbsp;'img_height' => 30,<br />
 &nbsp;&nbsp;&nbsp;&nbsp;'expiration' => 7200<br />
@@ -109,7 +110,8 @@ echo $cap['image'];</code>
 		<li>The captcha function requires the GD image library.</li>
 		<li>Only the img_path and img_url are required.</li>
 		<li>If a "word" is not supplied, the function will generate a random
-		ASCII string.  You might put together your own word library that
+		ASCII string of 'word_length' characters (default 8; before 2.3.0 the
+		word came out empty).  You might put together your own word library that
 		you can draw randomly from.</li>
 		<li>If you do not specify a path to a TRUE TYPE font, the native ugly GD
 		font will be used.</li>

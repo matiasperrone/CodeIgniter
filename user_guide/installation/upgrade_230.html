@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Upgrading from 2.2.6 to 2.3.0 : CodeIgniter User Guide</title>
+
+<style type='text/css' media='all'>@import url('../userguide.css');</style>
+<link rel='stylesheet' type='text/css' media='all' href='../userguide.css' />
+
+<script type="text/javascript" src="../nav/nav.js"></script>
+<script type="text/javascript" src="../nav/prototype.lite.js"></script>
+<script type="text/javascript" src="../nav/moo.fx.js"></script>
+<script type="text/javascript" src="../nav/user_guide_menu.js"></script>
+
+<meta http-equiv='expires' content='-1' />
+<meta http-equiv= 'pragma' content='no-cache' />
+<meta name='robots' content='all' />
+<meta name='author' content='ExpressionEngine Dev Team' />
+<meta name='description' content='CodeIgniter User Guide' />
+
+</head>
+<body>
+
+<!-- START NAVIGATION -->
+<div id="nav"><div id="nav_inner"><script type="text/javascript">create_menu('../');</script></div></div>
+<div id="nav2"><a name="top"></a><a href="javascript:void(0);" onclick="myHeight.toggle();"><img src="../images/nav_toggle_darker.jpg" width="154" height="43" border="0" title="Toggle Table of Contents" alt="Toggle Table of Contents" /></a></div>
+<div id="masthead">
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td><h1>CodeIgniter User Guide Version 2.3.0</h1></td>
+<td id="breadcrumb_right"><a href="../toc.html">Table of Contents Page</a></td>
+</tr>
+</table>
+</div>
+<!-- END NAVIGATION -->
+
+
+<!-- START BREADCRUMB -->
+<table cellpadding="0" cellspacing="0" border="0" style="width:100%">
+<tr>
+<td id="breadcrumb">
+<a href="http://codeigniter.com/">CodeIgniter Home</a> &nbsp;&#8250;&nbsp;
+<a href="../index.html">User Guide Home</a> &nbsp;&#8250;&nbsp;
+Upgrading from 2.2.6 to 2.3.0
+</td>
+<td id="searchbox"><form method="get" action="http://www.google.com/search"><input type="hidden" name="as_sitesearch" id="as_sitesearch" value="codeigniter.com/user_guide/" />Search User Guide&nbsp; <input type="text" class="input" style="width:200px;" name="q" id="q" size="31" maxlength="255" value="" />&nbsp;<input type="submit" class="submit" name="sa" value="Go" /></form></td>
+</tr>
+</table>
+<!-- END BREADCRUMB -->
+
+<br clear="all" />
+
+
+<!-- START CONTENT -->
+<div id="content">
+
+<h1>Upgrading from 2.2.6 to 2.3.0</h1>
+
+<p>Before performing an update you should take your site offline by replacing the index.php file with a static one.</p>
+
+<p>CodeIgniter 2.3.0 runs on <strong>PHP 5.6 through PHP 8.5</strong>. Applications that already ran on 5.x keep working: every change below is
+either invisible on PHP 5 or has a documented opt-out.</p>
+
+<h2>Step 1: Update your CodeIgniter files</h2>
+
+<p>Replace all files and directories in your "system" folder and replace your index.php file. If any modifications were made to your index.php they will need to be made fresh in this new one.</p>
+
+<p class="important"><strong>Note:</strong> If you have any custom developed files in these folders please make copies of them first.</p>
+
+<h2>Step 2: Add the new config items</h2>
+
+<p>Two new items are read from <dfn>application/config/config.php</dfn>. Both have safe defaults, so adding them is optional:</p>
+
+<code>$config['composer_autoload'] = FALSE;<br />
+$config['encryption_driver'] = 'auto';</code>
+
+<ul>
+	<li><kbd>composer_autoload</kbd>: set it to <kbd>TRUE</kbd> to load <dfn>vendor/autoload.php</dfn> (next to index.php, or else <dfn>application/vendor/autoload.php</dfn>), or to the path of a custom auto-loader.
+	With it enabled, packages added with <samp>composer require</samp> are available everywhere in your application. A missing auto-loader stops the request with an explanatory error.</li>
+	<li><kbd>encryption_driver</kbd>: see Step 4.</li>
+</ul>
+
+<h2>Step 3: Database drivers</h2>
+
+<p>The extensions behind the <kbd>mysql</kbd> (removed in PHP 7.0), <kbd>mssql</kbd> (7.0) and <kbd>sqlite</kbd> (5.4) drivers no longer exist in modern PHP.</p>
+
+<ul>
+	<li>A configuration that still says <kbd>'dbdriver' => 'mysql'</kbd> now transparently uses <kbd>mysqli</kbd> when the mysql extension is missing. The default in
+	<dfn>application/config/database.php</dfn> is now <kbd>mysqli</kbd>.</li>
+	<li>Selecting <kbd>mssql</kbd> or <kbd>sqlite</kbd> without their extension now stops with a message pointing to <kbd>sqlsrv</kbd> / <kbd>pdo</kbd>, instead of a fatal error.</li>
+	<li>The <kbd>pdo</kbd> driver now really sets <kbd>PDO::ERRMODE_SILENT</kbd> (the option was ignored before). PHP 8 throws exceptions by default, so without this fix a failed query would throw
+	instead of returning <kbd>FALSE</kbd> as it always did on PHP 5/7.</li>
+</ul>
+
+<h2>Step 4: Encryption class</h2>
+
+<p>The mcrypt extension was removed from PHP in 7.2. The <a href="../libraries/encryption.html">Encryption class</a> now supports two backends, chosen with <kbd>$config['encryption_driver']</kbd>:</p>
+
+<ul>
+	<li><kbd>'auto'</kbd> (default): mcrypt when the extension is loaded, otherwise OpenSSL. <strong>Existing sites keep working untouched</strong>, and data encrypted before the upgrade still decodes.</li>
+	<li><kbd>'mcrypt'</kbd>: always mcrypt (on PHP 7.2+ it has to be installed from PECL; its functions raise deprecation notices which the class silences).</li>
+	<li><kbd>'openssl'</kbd>: AES through OpenSSL.</li>
+</ul>
+
+<p class="important"><strong>Compatibility between the backends:</strong> OpenSSL can read and write everything mcrypt produced with the <kbd>rijndael-128</kbd> cipher
+(all modes of <kbd>set_mode()</kbd> except mcrypt's 8-bit <kbd>ofb</kbd>), the byte format is identical. It <em>cannot</em> read data produced with
+<kbd>rijndael-256</kbd>, <strong>which is the default cipher</strong>: that is the 256-bit block variant of Rijndael, which OpenSSL does not implement.
+With the OpenSSL backend <kbd>rijndael-256</kbd> is mapped to AES, so it works but is a different format. If you have stored data (cookies, database columns) encrypted with the
+default cipher and you are moving to a PHP without mcrypt, decode it while mcrypt is still available and store it again, or call <samp>$this->encrypt->set_cipher('rijndael-128')</samp>
+in the code that wrote it before migrating.</p>
+
+<p>The <samp>MCRYPT_*</samp> constants are no longer needed: <samp>set_cipher('rijndael-128')</samp> and <samp>set_mode('cbc')</samp> take the plain strings.
+The initialisation vector now comes from <samp>random_bytes()</samp> instead of mcrypt's weak <samp>MCRYPT_RAND</samp>.</p>
+
+<h2>Step 5: Behaviour that was fixed</h2>
+
+<p>These were bugs that produced wrong results or PHP errors, and are now corrected on every PHP version:</p>
+
+<ul>
+	<li><kbd>XML_RPC_Values::iso8601_encode()</kbd> used format codes that do not exist (<samp>%i</samp>, <samp>%s</samp>) and returned values such as <samp>20231114T22:%i:1700000000</samp>. It now returns <samp>20231114T22:13:20</samp>.</li>
+	<li><kbd>create_captcha()</kbd> returned an empty word when none was supplied, and could loop forever on PHP below 7. A new <kbd>word_length</kbd> option (default 8) controls the generated word.</li>
+	<li>The Zip class stored the wrong modification time for files read from disk.</li>
+	<li>The Unit Testing class report was empty on PHP 8.</li>
+	<li>The Output class passed NULL to string functions when a controller produced no output.</li>
+	<li><kbd>CI_Input::valid_ip()</kbd> raised a TypeError on PHP 8.</li>
+	<li>The XML-RPC library's parser registry no longer uses the parser as an array key (an <samp>XMLParser</samp> object on PHP 8).</li>
+</ul>
+
+<h2>Step 6: Things to check in your own code</h2>
+
+<ul>
+	<li>PHP 8.2+ deprecates creating undeclared properties. The framework's classes are marked <samp>#[\AllowDynamicProperties]</samp> (a plain comment on PHP 5/7), so your controllers, models and
+	libraries that extend them are unaffected. Declare the properties on your own base classes if you want to be ready for PHP 9.</li>
+	<li>Replace calls to functions PHP removed in your own code: <samp>each()</samp>, <samp>create_function()</samp>, <samp>mysql_*</samp>, <samp>mcrypt_*</samp>, <samp>get_magic_quotes_gpc()</samp>.</li>
+	<li>PHP 8 compares <samp>0 == 'text'</samp> as <samp>FALSE</samp> (it was <samp>TRUE</samp>), and throws a TypeError when you pass NULL or a wrongly typed value to many built-in functions.</li>
+</ul>
+
+<h2>Running the test suite</h2>
+
+<p>The distribution now ships a dependency free test suite that runs unchanged on PHP 5.6 through 8.5: <samp>php tests/run.php</samp>, or <samp>tests/run-matrix.sh</samp> to run it under every installed interpreter.</p>
+
+</div>
+<!-- END CONTENT -->
+
+
+<div id="footer">
+<p>
+Previous Topic:&nbsp;&nbsp;<a href="index.html">Installation Instructions</a>
+&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
+<a href="#top">Top of Page</a>&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
+<a href="../index.html">User Guide Home</a>&nbsp;&nbsp;&nbsp;&middot;&nbsp;&nbsp;
+Next Topic:&nbsp;&nbsp;<a href="troubleshooting.html">Troubleshooting</a>
+</p>
+<p><a href="http://codeigniter.com">CodeIgniter</a> &nbsp;&middot;&nbsp; Copyright &#169; 2006 - 2014 &nbsp;&middot;&nbsp; <a href="http://ellislab.com/">EllisLab, Inc.</a> &nbsp;&middot;&nbsp; Copyright &#169; 2014 - 2015 &nbsp;&middot;&nbsp; <a href="http://bcit.ca/">British Columbia Institute of Technology</a></p>
+</div>
+
+</body>
+</html>

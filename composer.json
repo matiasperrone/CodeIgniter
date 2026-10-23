@@ -1,0 +1,43 @@
+{
+	"name": "codeigniter/framework",
+	"description": "The CodeIgniter 2.x framework, running on PHP 5.6 through 8.5",
+	"type": "project",
+	"keywords": [
+		"framework",
+		"codeigniter",
+		"mvc",
+		"php"
+	],
+	"homepage": "https://codeigniter.com",
+	"license": "proprietary",
+	"support": {
+		"source": "https://github.com/matiasperrone/CodeIgniter",
+		"issues": "https://github.com/matiasperrone/CodeIgniter/issues",
+		"docs": "https://codeigniter.com/userguide2/"
+	},
+	"require": {
+		"php": ">=5.6"
+	},
+	"suggest": {
+		"ext-mbstring": "Needed for multi-byte string handling (UTF-8 support)",
+		"ext-openssl": "Encryption class backend when mcrypt is not available",
+		"ext-mcrypt": "Needed to read data encrypted with the Encryption class' default (rijndael-256) cipher",
+		"ext-mysqli": "MySQL / MariaDB database driver",
+		"ext-pgsql": "PostgreSQL database driver",
+		"ext-pdo": "PDO database driver",
+		"ext-sqlsrv": "Microsoft SQL Server database driver",
+		"ext-gd": "Image manipulation and CAPTCHA generation",
+		"ext-xml": "XML-RPC library",
+		"ext-curl": "Trackback and XML-RPC client over HTTP",
+		"ext-zip": "Reading archives created by the Zip library back (used by the test suite)"
+	},
+	"config": {
+		"preferred-install": "dist",
+		"sort-packages": true
+	},
+	"scripts": {
+		"test": "php tests/run.php",
+		"test:all": "bash tests/run-matrix.sh"
+	},
+	"minimum-stability": "stable"
+}
