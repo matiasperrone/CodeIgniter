@@ -109,6 +109,13 @@ function &DB($params = '', $active_record_override = NULL)
 		show_error('You have not selected a database type to connect to.');
 	}
 
+	// The mysql_* extension was removed in PHP 7.0. Applications that still
+	// say 'mysql' keep working through its drop-in successor, mysqli.
+	if ($params['dbdriver'] == 'mysql' && ! function_exists('mysql_connect') && function_exists('mysqli_connect'))
+	{
+		$params['dbdriver'] = 'mysqli';
+	}
+
 	// Load the DB classes.  Note: Since the active record class is optional
 	// we need to dynamically create a class that extends proper parent class
 	// based on whether we're using the active record class or not.
@@ -146,6 +153,13 @@ function &DB($params = '', $active_record_override = NULL)
 
 	if ($DB->autoinit == TRUE)
 	{
+		// Extensions PHP has dropped (mssql: 7.0, sqlite2: 5.4): say so instead of a fatal error
+		$removed = array('mssql' => array('mssql_connect', 'sqlsrv'), 'sqlite' => array('sqlite_open', 'pdo (with an sqlite DSN)'));
+		if (isset($removed[$params['dbdriver']]) && ! function_exists($removed[$params['dbdriver']][0]))
+		{
+			show_error('The "'.$params['dbdriver'].'" database driver needs the '.$removed[$params['dbdriver']][0].'() function, which is not available in this PHP version. Use the "'.$removed[$params['dbdriver']][1].'" driver instead.');
+		}
+
 		$DB->initialize();
 	}
 

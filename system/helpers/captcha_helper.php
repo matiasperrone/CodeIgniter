@@ -42,7 +42,7 @@ if ( ! function_exists('create_captcha'))
 {
 	function create_captcha($data = '', $img_path = '', $img_url = '', $font_path = '')
 	{
-		$defaults = array('word' => '', 'img_path' => '', 'img_url' => '', 'img_width' => '150', 'img_height' => '30', 'font_path' => '', 'expiration' => 7200);
+		$defaults = array('word' => '', 'word_length' => 8, 'img_path' => '', 'img_url' => '', 'img_width' => '150', 'img_height' => '30', 'font_path' => '', 'expiration' => 7200);
 
 		foreach ($defaults as $key => $val)
 		{
@@ -146,34 +146,37 @@ if ( ! function_exists('create_captcha'))
 				$byte_index = $word_index = 0;
 				while ($word_index < $word_length)
 				{
-					if (($rand_index = unpack('C', $bytes[$byte_index++])) > $rand_max)
+					// Do we have more random data to use? It could be exhausted
+					// by previous iterations ignoring bytes higher than $rand_max.
+					if ($byte_index === $pool_length)
 					{
-						// Was this the last byte we have?
-						// If so, try to fetch more.
-						if ($byte_index === $pool_length)
+						// No failures should be possible if the first
+						// get_random_bytes() call didn't return FALSE, but still ...
+						for ($i = 0; $i < 5; $i++)
 						{
-							// No failures should be possible if
-							// the first get_random_bytes() call
-							// didn't return FALSE, but still ...
-							for ($i = 0; $i < 5; $i++)
+							if (($bytes = _ci_captcha_get_random_bytes($pool_length)) === FALSE)
 							{
-								if (($bytes = _ci_captcha_get_random_bytes($pool_length)) === FALSE)
-								{
-									continue;
-								}
-
-								$byte_index = 0;
-								break;
+								continue;
 							}
 
-							if ($bytes === FALSE)
-							{
-								// Sadly, this means fallback to mt_rand()
-								$word = '';
-								break;
-							}
+							$byte_index = 0;
+							break;
 						}
 
+						if ($bytes === FALSE)
+						{
+							// Sadly, this means fallback to mt_rand()
+							$word = '';
+							break;
+						}
+					}
+
+					// unpack() returns an array: comparing it to an int is always TRUE
+					$rand_index = unpack('C', $bytes[$byte_index++]);
+					$rand_index = $rand_index[1];
+
+					if ($rand_index > $rand_max)
+					{
 						continue;
 					}
 
@@ -254,7 +257,7 @@ if ( ! function_exists('create_captcha'))
 			$rad1 = $radius * (($i + 1) / $points);
 			$x1 = ($rad1 * cos($theta)) + $x_axis;
 			$y1 = ($rad1 * sin($theta )) + $y_axis;
-			imageline($im, $x, $y, $x1, $y1, $grid_color);
+			imageline($im, (int) $x, (int) $y, (int) $x1, (int) $y1, $grid_color);
 			$theta = $theta - $thetac;
 		}
 
@@ -267,13 +270,13 @@ if ( ! function_exists('create_captcha'))
 		if ($use_font == FALSE)
 		{
 			$font_size = 5;
-			$x = rand(0, $img_width/($length/3));
+			$x = rand(0, (int) ($img_width/($length/3)));
 			$y = 0;
 		}
 		else
 		{
 			$font_size	= 16;
-			$x = rand(0, $img_width/($length/1.5));
+			$x = rand(0, (int) ($img_width/($length/1.5)));
 			$y = $font_size+2;
 		}
 
@@ -281,13 +284,13 @@ if ( ! function_exists('create_captcha'))
 		{
 			if ($use_font == FALSE)
 			{
-				$y = rand(0 , $img_height/2);
+				$y = rand(0, (int) ($img_height/2));
 				imagestring($im, $font_size, $x, $y, substr($word, $i, 1), $text_color);
 				$x += ($font_size*2);
 			}
 			else
 			{
-				$y = rand($img_height/2, $img_height-3);
+				$y = rand((int) ($img_height/2), $img_height-3);
 				imagettftext($im, $font_size, $angle, $x, $y, $text_color, $font_path, substr($word, $i, 1));
 				$x += $font_size;
 			}
@@ -310,18 +313,30 @@ if ( ! function_exists('create_captcha'))
 
 		$img = "<img src=\"$img_url$img_name\" width=\"$img_width\" height=\"$img_height\" style=\"border:0;\" alt=\" \" />";
 
-		ImageDestroy($im);
+		if (PHP_VERSION_ID < 80000)
+		{
+			// GdImage objects are freed automatically since PHP 8.0 (imagedestroy() is deprecated in 8.5)
+			ImageDestroy($im);
+		}
 
 		return array('word' => $word, 'time' => $now, 'image' => $img);
 	}
 
 	function _ci_captcha_get_random_bytes($length)
 	{
-		if (defined('MCRYPT_DEV_URANDOM'))
+		if (function_exists('random_bytes'))
 		{
-			return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
+			try
+			{
+				return random_bytes($length);
+			}
+			catch (Exception $e)
+			{
+				// fall through to the next possible source
+			}
 		}
-		elseif (function_exists('openssl_random_pseudo_bytes'))
+
+		if (function_exists('openssl_random_pseudo_bytes'))
 		{
 			return openssl_random_pseudo_bytes($length);
 		}

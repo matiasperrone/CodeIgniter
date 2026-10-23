@@ -25,6 +25,7 @@
  * @author		Esen Sagynov
  * @link		http://codeigniter.com/user_guide/database/
  */
+#[\AllowDynamicProperties]
 class CI_DB_cubrid_result extends CI_DB_result {
 
 	/**

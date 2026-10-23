@@ -27,6 +27,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/encryption.html
  */
+#[\AllowDynamicProperties]
 class CI_Encrypt {
 
 	var $CI;
@@ -35,11 +36,20 @@ class CI_Encrypt {
 	var $_mcrypt_exists = FALSE;
 	var $_mcrypt_cipher;
 	var $_mcrypt_mode;
+	var $_driver = '';		// 'mcrypt' or 'openssl', see the encryption_driver config item
 
 	/**
 	 * Constructor
 	 *
-	 * Simply determines whether the mcrypt library exists.
+	 * Picks the cipher backend. The mcrypt extension is gone from PHP's
+	 * core since 7.2, so besides it the library can use OpenSSL:
+	 *
+	 *	$config['encryption_driver'] = 'auto';		// mcrypt if loaded, else openssl (default)
+	 *	$config['encryption_driver'] = 'mcrypt';
+	 *	$config['encryption_driver'] = 'openssl';
+	 *
+	 * Data encrypted with mcrypt keeps decoding with mcrypt; see the
+	 * 2.3.0 upgrade notes for what OpenSSL can and cannot read.
 	 *
 	 */
 	public function __construct()
@@ -47,9 +57,24 @@ class CI_Encrypt {
 		$this->CI =& get_instance();
 		$this->_mcrypt_exists = ( ! function_exists('mcrypt_encrypt')) ? FALSE : TRUE;
 
-		if ($this->_mcrypt_exists === FALSE)
+		$driver = strtolower((string) $this->CI->config->item('encryption_driver'));
+
+		if ($driver == 'mcrypt' OR ($driver != 'openssl' AND $this->_mcrypt_exists === TRUE))
 		{
-			show_error('The Encrypt library requires the Mcrypt extension.');
+			if ($this->_mcrypt_exists === FALSE)
+			{
+				show_error('The Encrypt library is set to use the Mcrypt extension, which is not available.');
+			}
+
+			$this->_driver = 'mcrypt';
+		}
+		elseif (function_exists('openssl_encrypt'))
+		{
+			$this->_driver = 'openssl';
+		}
+		else
+		{
+			show_error('The Encrypt library requires the Mcrypt or OpenSSL extension.');
 		}
 
 		log_message('debug', "Encrypt Class Initialized");
@@ -177,7 +202,7 @@ class CI_Encrypt {
 	 * @param	string
 	 * @return	string
 	 */
-	function encode_from_legacy($string, $legacy_mode = MCRYPT_MODE_ECB, $key = '')
+	function encode_from_legacy($string, $legacy_mode = 'ecb', $key = '')
 	{
 		// decode it first
 		// set mode temporarily to what it was when string was encoded with the legacy
@@ -270,9 +295,15 @@ class CI_Encrypt {
 	 */
 	function mcrypt_encode($data, $key)
 	{
-		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
-		$init_vect = mcrypt_create_iv($init_size, MCRYPT_RAND);
-		return $this->_add_cipher_noise($init_vect.mcrypt_encrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), $key);
+		if ($this->_driver == 'openssl')
+		{
+			return $this->_openssl_encode($data, $key);
+		}
+
+		// The mcrypt functions are deprecated (PECL builds raise E_DEPRECATED on PHP 8)
+		$init_size = @mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
+		$init_vect = random_bytes($init_size);
+		return $this->_add_cipher_noise($init_vect.@mcrypt_encrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), $key);
 	}
 
 	// --------------------------------------------------------------------
@@ -287,8 +318,13 @@ class CI_Encrypt {
 	 */
 	function mcrypt_decode($data, $key)
 	{
+		if ($this->_driver == 'openssl')
+		{
+			return $this->_openssl_decode($data, $key);
+		}
+
 		$data = $this->_remove_cipher_noise($data, $key);
-		$init_size = mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
+		$init_size = @mcrypt_get_iv_size($this->_get_cipher(), $this->_get_mode());
 
 		if ($init_size > strlen($data))
 		{
@@ -297,7 +333,114 @@ class CI_Encrypt {
 
 		$init_vect = substr($data, 0, $init_size);
 		$data = substr($data, $init_size);
-		return rtrim(mcrypt_decrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), "\0");
+		return rtrim(@mcrypt_decrypt($this->_get_cipher(), $key, $data, $this->_get_mode(), $init_vect), "\0");
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Resolve the OpenSSL method for the configured cipher/mode
+	 *
+	 * Only the AES family can be offered: mcrypt's 'rijndael-128' is AES and
+	 * its output is byte-for-byte what OpenSSL produces with the same key and
+	 * IV. 'rijndael-256' (the default cipher) is the 256-bit BLOCK variant of
+	 * Rijndael, which OpenSSL does not implement, so it is mapped to AES: it
+	 * works, but ciphertexts are not interchangeable with mcrypt's.
+	 *
+	 * mcrypt's block-padding (NUL bytes) and IV-in-front layout are kept so
+	 * the format, including the cipher noise, is the same for both drivers.
+	 *
+	 * @access	private
+	 * @param	string	the (hashed) key
+	 * @return	array	method, block size and whether the mode pads
+	 */
+	function _openssl_params($key)
+	{
+		$cipher = strtolower($this->_get_cipher());
+		$mode = strtolower($this->_get_mode());
+
+		if ($cipher != 'rijndael-128' AND $cipher != 'rijndael-256')
+		{
+			show_error('The OpenSSL driver of the Encrypt library only supports the rijndael-128 and rijndael-256 ciphers.');
+		}
+
+		// mcrypt uses the largest AES key size that fits the key it is given
+		$len = strlen($key);
+		$bits = ($len >= 32) ? 256 : (($len >= 24) ? 192 : 128);
+
+		// mcrypt's 8-bit "cfb" is OpenSSL's cfb8; "ncfb"/"nofb" are the full-block variants
+		$modes = array('cbc' => 'cbc', 'ecb' => 'ecb', 'cfb' => 'cfb8', 'ncfb' => 'cfb', 'nofb' => 'ofb');
+
+		if ( ! isset($modes[$mode]))
+		{
+			show_error('The OpenSSL driver of the Encrypt library does not support the "'.$mode.'" mode.');
+		}
+
+		return array(
+			'method'	=> 'aes-'.$bits.'-'.$modes[$mode],
+			'block'		=> 16,
+			'pad'		=> ($mode == 'cbc' OR $mode == 'ecb')
+		);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Encrypt using OpenSSL
+	 *
+	 * @access	private
+	 * @param	string
+	 * @param	string
+	 * @return	string
+	 */
+	function _openssl_encode($data, $key)
+	{
+		$p = $this->_openssl_params($key);
+
+		if ($p['pad'] AND ($rest = strlen($data) % $p['block']) !== 0)
+		{
+			$data .= str_repeat("\0", $p['block'] - $rest);
+		}
+
+		// Like mcrypt, the IV is always one block, even where the mode does not use it
+		$init_vect = random_bytes($p['block']);
+		$iv = (substr($p['method'], -3) == 'ecb') ? '' : $init_vect;
+
+		return $this->_add_cipher_noise($init_vect.openssl_encrypt($data, $p['method'], $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv), $key);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Decrypt using OpenSSL
+	 *
+	 * @access	private
+	 * @param	string
+	 * @param	string
+	 * @return	string
+	 */
+	function _openssl_decode($data, $key)
+	{
+		$p = $this->_openssl_params($key);
+		$data = $this->_remove_cipher_noise($data, $key);
+
+		if ($p['block'] > strlen($data))
+		{
+			return FALSE;
+		}
+
+		$init_vect = substr($data, 0, $p['block']);
+		$data = substr($data, $p['block']);
+
+		if ($p['pad'] AND strlen($data) % $p['block'] !== 0)
+		{
+			return FALSE;
+		}
+
+		$iv = (substr($p['method'], -3) == 'ecb') ? '' : $init_vect;
+		$dec = openssl_decrypt($data, $p['method'], $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING, $iv);
+
+		return ($dec === FALSE) ? FALSE : rtrim($dec, "\0");
 	}
 
 	// --------------------------------------------------------------------
@@ -411,7 +554,7 @@ class CI_Encrypt {
 	{
 		if ($this->_mcrypt_cipher == '')
 		{
-			$this->_mcrypt_cipher = MCRYPT_RIJNDAEL_256;
+			$this->_mcrypt_cipher = 'rijndael-256'; // MCRYPT_RIJNDAEL_256
 		}
 
 		return $this->_mcrypt_cipher;
@@ -429,7 +572,7 @@ class CI_Encrypt {
 	{
 		if ($this->_mcrypt_mode == '')
 		{
-			$this->_mcrypt_mode = MCRYPT_MODE_CBC;
+			$this->_mcrypt_mode = 'cbc'; // MCRYPT_MODE_CBC
 		}
 
 		return $this->_mcrypt_mode;

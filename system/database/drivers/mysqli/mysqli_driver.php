@@ -29,6 +29,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/database/
  */
+#[\AllowDynamicProperties]
 class CI_DB_mysqli_driver extends CI_DB {
 
 	var $dbdriver = 'mysqli';

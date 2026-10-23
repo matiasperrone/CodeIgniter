@@ -29,6 +29,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/database/
  */
+#[\AllowDynamicProperties]
 class CI_DB_pdo_driver extends CI_DB {
 
 	var $dbdriver = 'pdo';
@@ -94,7 +95,7 @@ class CI_DB_pdo_driver extends CI_DB {
 	 */
 	function db_connect()
 	{
-		$this->options['PDO::ATTR_ERRMODE'] = PDO::ERRMODE_SILENT;
+		$this->options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
 
 		return new PDO($this->hostname, $this->username, $this->password, $this->options);
 	}
@@ -109,7 +110,7 @@ class CI_DB_pdo_driver extends CI_DB {
 	 */
 	function db_pconnect()
 	{
-		$this->options['PDO::ATTR_ERRMODE'] = PDO::ERRMODE_SILENT;
+		$this->options[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
 		$this->options['PDO::ATTR_PERSISTENT'] = TRUE;
 	
 		return new PDO($this->hostname, $this->username, $this->password, $this->options);

@@ -25,6 +25,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/image_lib.html
  */
+#[\AllowDynamicProperties]
 class CI_Image_lib {
 
 	var $image_library		= 'gd2';	// Can be:  imagemagick, netpbm, gd, gd2
@@ -91,6 +92,25 @@ class CI_Image_lib {
 		}
 
 		log_message('debug', "Image Lib Class Initialized");
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Free a GD image
+	 *
+	 * GdImage objects are released automatically since PHP 8.0 and
+	 * imagedestroy() is deprecated as of PHP 8.5.
+	 *
+	 * @param	resource|object
+	 * @return	void
+	 */
+	protected function _image_destroy($img)
+	{
+		if (PHP_VERSION_ID < 80000)
+		{
+			imagedestroy($img);
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -537,8 +557,8 @@ class CI_Image_lib {
 		}
 
 		//  Kill the file handles
-		imagedestroy($dst_img);
-		imagedestroy($src_img);
+		$this->_image_destroy($dst_img);
+		$this->_image_destroy($src_img);
 
 		// Set the file to 777
 		@chmod($this->full_dst_path, FILE_WRITE_MODE);
@@ -743,8 +763,8 @@ class CI_Image_lib {
 		}
 
 		//  Kill the file handles
-		imagedestroy($dst_img);
-		imagedestroy($src_img);
+		$this->_image_destroy($dst_img);
+		$this->_image_destroy($src_img);
 
 		// Set the file to 777
 
@@ -829,7 +849,7 @@ class CI_Image_lib {
 		}
 
 		//  Kill the file handles
-		imagedestroy($src_img);
+		$this->_image_destroy($src_img);
 
 		// Set the file to 777
 		@chmod($this->full_dst_path, FILE_WRITE_MODE);
@@ -968,8 +988,8 @@ class CI_Image_lib {
 			}
 		}
 
-		imagedestroy($src_img);
-		imagedestroy($wm_img);
+		$this->_image_destroy($src_img);
+		$this->_image_destroy($wm_img);
 
 		return TRUE;
 	}
@@ -1109,7 +1129,7 @@ class CI_Image_lib {
 			$this->image_save_gd($src_img);
 		}
 
-		imagedestroy($src_img);
+		$this->_image_destroy($src_img);
 
 		return TRUE;
 	}

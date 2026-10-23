@@ -40,6 +40,7 @@
  *
  */
 
+#[\AllowDynamicProperties]
 class CI_DB_oci8_driver extends CI_DB {
 
 	var $dbdriver = 'oci8';

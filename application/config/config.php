@@ -116,6 +116,28 @@ $config['enable_hooks'] = FALSE;
 */
 $config['subclass_prefix'] = 'MY_';
 
+/*
+|--------------------------------------------------------------------------
+| Composer auto-loading
+|--------------------------------------------------------------------------
+|
+| Enabling this setting will tell CodeIgniter to look for a Composer
+| package auto-loader script and load it, so every package installed with
+| "composer require" is available to your controllers, models and libraries.
+|
+| Possible values:
+|
+|	FALSE	Disabled (default)
+|	TRUE	Loads vendor/autoload.php from the folder that holds index.php
+|		(where "composer install" puts it), or else application/vendor/autoload.php
+|	string	The path of a custom auto-loader script, for example:
+|		$config['composer_autoload'] = FCPATH.'../vendor/autoload.php';
+|
+| Packages are installed with Composer, see composer.json in the project root.
+|
+*/
+$config['composer_autoload'] = FALSE;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -233,6 +255,23 @@ $config['cache_path'] = '';
 |
 */
 $config['encryption_key'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Encryption Driver
+|--------------------------------------------------------------------------
+|
+| Which PHP extension the Encryption class uses:
+|
+|	'auto'		mcrypt when it is loaded, otherwise openssl (default)
+|	'mcrypt'	Always mcrypt. Required to read data encrypted with the
+|			default rijndael-256 cipher, but the extension is no longer
+|			part of PHP (it needs PECL on PHP 7.2+).
+|	'openssl'	AES through OpenSSL. Can read rijndael-128 data written by
+|			mcrypt, but not rijndael-256 data. See the 2.3.0 upgrade notes.
+|
+*/
+$config['encryption_driver'] = 'auto';
 
 /*
 |--------------------------------------------------------------------------

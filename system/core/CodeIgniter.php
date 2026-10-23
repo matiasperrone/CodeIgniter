@@ -34,7 +34,7 @@
  * @var string
  *
  */
-	define('CI_VERSION', '2.2.6');
+	define('CI_VERSION', '2.3.0');
 
 /**
  * CodeIgniter Branch (Core = TRUE, Reactor = FALSE)
@@ -50,6 +50,16 @@
  * ------------------------------------------------------
  */
 	require(BASEPATH.'core/Common.php');
+
+/*
+ * ------------------------------------------------------
+ *  Load the compatibility functions
+ * ------------------------------------------------------
+ *
+ * Polyfills for functions newer than the oldest PHP version
+ * supported. Each file only defines what the running PHP lacks.
+ */
+	require(BASEPATH.'core/compat/random_bytes.php');
 
 /*
  * ------------------------------------------------------
@@ -142,6 +152,30 @@
 	if (isset($assign_to_config))
 	{
 		$CFG->_assign_to_config($assign_to_config);
+	}
+
+/*
+ * ------------------------------------------------------
+ *  Load the Composer auto-loader (if enabled)
+ * ------------------------------------------------------
+ *
+ * See $config['composer_autoload'] in application/config/config.php
+ */
+	if ($composer_autoload = config_item('composer_autoload'))
+	{
+		if ($composer_autoload === TRUE)
+		{
+			$composer_autoload = file_exists(FCPATH.'vendor/autoload.php') ? FCPATH.'vendor/autoload.php' : APPPATH.'vendor/autoload.php';
+		}
+
+		if (file_exists($composer_autoload))
+		{
+			require_once($composer_autoload);
+		}
+		else
+		{
+			show_error('$config[\'composer_autoload\'] is enabled but the Composer auto-loader was not found at '.$composer_autoload.'. Run "composer install" first.');
+		}
 	}
 
 /*

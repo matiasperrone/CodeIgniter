@@ -31,6 +31,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/zip.html
  */
+#[\AllowDynamicProperties]
 class CI_Zip  {
 
 	var $zipdata	= '';
@@ -89,7 +90,8 @@ class CI_Zip  {
 	function _get_mod_time($dir)
 	{
 		// filemtime() will return false, but it does raise an error.
-		$date = (@filemtime($dir)) ? filemtime($dir) : getdate($this->now);
+		$mtime = @filemtime($dir);
+		$date = ($mtime) ? getdate($mtime) : getdate($this->now);
 
 		$time['file_mtime'] = ($date['hours'] << 11) + ($date['minutes'] << 5) + $date['seconds'] / 2;
 		$time['file_mdate'] = (($date['year'] - 1980) << 9) + ($date['mon'] << 5) + $date['mday'];

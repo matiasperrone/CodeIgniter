@@ -27,6 +27,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/uri.html
  */
+#[\AllowDynamicProperties]
 class CI_Unit_test {
 
 	var $active					= TRUE;
@@ -235,7 +236,9 @@ class CI_Unit_test {
 			$temp = array();
 			foreach ($result as $key => $val)
 			{
-				if ( ! in_array($key, $this->_test_items_visible))
+				// Integer keys (the wrapper added by run()) always pass: PHP < 8 did this
+				// implicitly because 0 == 'test_name' was TRUE, PHP 8 no longer does
+				if ( ! is_int($key) AND ! in_array($key, $this->_test_items_visible))
 				{
 					continue;
 				}

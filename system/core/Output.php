@@ -27,6 +27,7 @@
  * @author		EllisLab Dev Team
  * @link		http://codeigniter.com/user_guide/libraries/output.html
  */
+#[\AllowDynamicProperties]
 class CI_Output {
 
 	/**
@@ -341,6 +342,13 @@ class CI_Output {
 		if ($output == '')
 		{
 			$output =& $this->final_output;
+		}
+
+		// A controller that produced no output leaves this NULL, and PHP 8.1+
+		// deprecates passing NULL to the string functions used below
+		if ($output === NULL)
+		{
+			$output = '';
 		}
 
 		// --------------------------------------------------------------------
