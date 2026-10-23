@@ -19,7 +19,8 @@
 |	['dbdriver'] The database type. ie: mysqli.  Currently supported:
 				 mysqli, postgre, odbc, sqlsrv, pdo, oci8, cubrid, and (PHP 5 only,
 				 their extensions were removed in PHP 7) mysql, mssql, sqlite.
-				 'mysql' falls back to mysqli when the mysql extension is missing.
+				 'mysql' falls back to mysqli, and 'mssql' to sqlsrv, when their
+				 extension is missing.
 |	['dbprefix'] You can add an optional prefix, which will be added
 |				 to the table name when using the  Active Record class
 |	['pconnect'] TRUE/FALSE - Whether to use a persistent connection

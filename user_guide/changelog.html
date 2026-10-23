@@ -70,7 +70,8 @@ Change Log
 			<li>Added <kbd>system/core/compat/random_bytes.php</kbd>, a <samp>random_bytes()</samp> polyfill for PHP 5.x.</li>
 			<li>Removed the usage of <samp>each()</samp>, <samp>strftime()</samp>, <samp>xml_set_object()</samp>, <samp>xml_parser_free()</samp> and of the <samp>MCRYPT_*</samp> constants, which were removed or deprecated in PHP 7/8.</li>
 			<li>Marked the framework classes with <samp>#[\AllowDynamicProperties]</samp> for PHP 8.2+.</li>
-			<li>Changed the default <kbd>dbdriver</kbd> to <kbd>mysqli</kbd>; <kbd>mysql</kbd> now falls back to it when the extension is missing.</li>
+			<li>Changed the default <kbd>dbdriver</kbd> to <kbd>mysqli</kbd>; <kbd>mysql</kbd> now falls back to it when the extension is missing, and <kbd>mssql</kbd> falls back to <kbd>sqlsrv</kbd>.</li>
+			<li>Fixed the <kbd>sqlsrv</kbd> driver's <samp>db_pconnect()</samp>, which did not return the connection.</li>
 		</ul>
 	</li>
 	<li><b>Libraries</b>

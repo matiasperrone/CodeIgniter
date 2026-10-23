@@ -88,7 +88,11 @@ $config['encryption_driver'] = 'auto';</code>
 <ul>
 	<li>A configuration that still says <kbd>'dbdriver' => 'mysql'</kbd> now transparently uses <kbd>mysqli</kbd> when the mysql extension is missing. The default in
 	<dfn>application/config/database.php</dfn> is now <kbd>mysqli</kbd>.</li>
-	<li>Selecting <kbd>mssql</kbd> or <kbd>sqlite</kbd> without their extension now stops with a message pointing to <kbd>sqlsrv</kbd> / <kbd>pdo</kbd>, instead of a fatal error.</li>
+	<li>A configuration that says <kbd>'dbdriver' => 'mssql'</kbd> now uses <kbd>sqlsrv</kbd> when the mssql extension is missing and the
+	<a href="http://php.net/sqlsrv">sqlsrv</a> extension (Microsoft's PECL package, which also needs the Microsoft ODBC driver on Linux) is installed.
+	A <kbd>host:port</kbd> hostname is rewritten to the <kbd>host,port</kbd> form sqlsrv expects.</li>
+	<li>Selecting <kbd>mssql</kbd> without either extension, or <kbd>sqlite</kbd> without its extension, stops with a message pointing to <kbd>sqlsrv</kbd> / <kbd>pdo</kbd>, instead of a fatal error.</li>
+	<li>The <kbd>sqlsrv</kbd> driver's persistent connection (<kbd>pconnect = TRUE</kbd>) never returned the connection and so always failed. It does now.</li>
 	<li>The <kbd>pdo</kbd> driver now really sets <kbd>PDO::ERRMODE_SILENT</kbd> (the option was ignored before). PHP 8 throws exceptions by default, so without this fix a failed query would throw
 	instead of returning <kbd>FALSE</kbd> as it always did on PHP 5/7.</li>
 </ul>

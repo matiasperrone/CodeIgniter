@@ -116,6 +116,18 @@ function &DB($params = '', $active_record_override = NULL)
 		$params['dbdriver'] = 'mysqli';
 	}
 
+	// Same for the mssql extension (removed in PHP 7.0): use sqlsrv, its successor.
+	// The old "host:port" notation is "host,port" for sqlsrv.
+	if ($params['dbdriver'] == 'mssql' && ! function_exists('mssql_connect') && function_exists('sqlsrv_connect'))
+	{
+		$params['dbdriver'] = 'sqlsrv';
+
+		if (isset($params['hostname']))
+		{
+			$params['hostname'] = preg_replace('/^([^:,]+):(\d+)$/', '$1,$2', $params['hostname']);
+		}
+	}
+
 	// Load the DB classes.  Note: Since the active record class is optional
 	// we need to dynamically create a class that extends proper parent class
 	// based on whether we're using the active record class or not.
