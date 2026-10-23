@@ -61,6 +61,13 @@ set_error_handler('_boot_error_handler');
 // The buffer stays open for the whole run (CodeIgniter's Loader records the
 // buffer level at boot, and an open buffer keeps header() calls from failing
 // with "headers already sent" under the CLI). It is flushed at shutdown.
+// Lets a test boot the framework with config overrides (the same thing
+// $assign_to_config does in index.php), see tests/support/boot_probe.php
+if (($cfg = getenv('CI_TEST_CONFIG')) !== FALSE && $cfg !== '')
+{
+	$assign_to_config = json_decode($cfg, TRUE);
+}
+
 ob_start();
 require BASEPATH.'core/CodeIgniter.php';
 $GLOBALS['__boot_output'] = ob_get_contents();

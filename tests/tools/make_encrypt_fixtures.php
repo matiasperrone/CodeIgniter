@@ -20,6 +20,12 @@ $cases = array(
 	array('name' => 'default cipher, long text', 'plain' => str_repeat('0123456789abcdef', 40), 'key' => 'k', 'cipher' => NULL, 'mode' => NULL),
 	array('name' => 'blowfish cbc', 'plain' => 'Blowfish payload', 'key' => 'bf-key', 'cipher' => MCRYPT_BLOWFISH, 'mode' => MCRYPT_MODE_CBC),
 	array('name' => 'rijndael-128 cfb', 'plain' => 'AES 128 in CFB', 'key' => 'aes-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_CFB),
+	array('name' => 'rijndael-128 cbc', 'plain' => 'AES 128 block, CBC, NUL padded text', 'key' => 'aes-cbc-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_CBC),
+	array('name' => 'rijndael-128 cbc, block multiple', 'plain' => '0123456789abcdef0123456789abcdef', 'key' => 'aes-cbc-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_CBC),
+	array('name' => 'rijndael-128 ecb', 'plain' => 'AES 128 block in ECB mode', 'key' => 'aes-ecb-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_ECB),
+	array('name' => 'rijndael-128 ncfb', 'plain' => 'AES full-block CFB payload', 'key' => 'aes-ncfb-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => 'ncfb' /* no MCRYPT_MODE_* constant exists for it */),
+	array('name' => 'rijndael-128 nofb', 'plain' => 'AES full-block OFB payload', 'key' => 'aes-nofb-key', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_NOFB),
+	array('name' => 'rijndael-128 cbc, utf-8', 'plain' => "Caf\xc3\xa9 \xe6\x97\xa5\xe6\x9c\xac", 'key' => 'ключ', 'cipher' => MCRYPT_RIJNDAEL_128, 'mode' => MCRYPT_MODE_CBC),
 	array('name' => 'rijndael-256 ecb', 'plain' => 'ECB mode payload', 'key' => 'ecb-key', 'cipher' => MCRYPT_RIJNDAEL_256, 'mode' => MCRYPT_MODE_ECB),
 );
 

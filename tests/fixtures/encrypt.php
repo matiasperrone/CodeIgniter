@@ -8,7 +8,7 @@ return array (
     'key' => 'secret-key',
     'cipher' => NULL,
     'mode' => NULL,
-    'encoded' => 'D95ag2KQsi6HBRQLnDtYh+bzG3smACvJNEWTHy4a/bn6Cc+oM8oM+f/BNX1z7pXqSWwjC2Md4mo6tmaueThdEkfXQ86PNGnr/cl5rCJWOBl9AIIwy0UscyFoaEfDYb4x',
+    'encoded' => '4QvR97zrGf6yim7sV6cLxQUy0cQOhjZdPaTB8mZyShcVdoX3bPlI7JP1hlLIzxUONqEjYldFPOgN5WQt7Hllr64t37Enu6mvjRISRn2aOyk7HHxYzzdYVboyiKdv9bWV',
   ),
   1 => 
   array (
@@ -17,7 +17,7 @@ return array (
     'key' => 'another key',
     'cipher' => NULL,
     'mode' => NULL,
-    'encoded' => 'HrDzYASgbOJENZFJ3edgZ1VVDzX+W0q3YayUxK6tbCMw77oz5/vai8vhHKdE2VcIKbkwZSsK71lR6YpNIvbTSg==',
+    'encoded' => '37TpXzZq9aCyY+fn3riliGsufg25iWwppkn8dUO37+ZewApXXq+qDQlQ/6Rd1WFbsWzae6SflfkgogdWZhRWxQ==',
   ),
   2 => 
   array (
@@ -26,7 +26,7 @@ return array (
     'key' => 'ключ',
     'cipher' => NULL,
     'mode' => NULL,
-    'encoded' => 'z7RTBMrcIMzlDZk2AZIJ7hZYxRYxdDYzAuFKfOiZUVNZzUZb45jgktOx1SqxUjM9wCKjM+aKgUcT7k1ptQJC5g==',
+    'encoded' => '11dxlKz2ubDM3fNgY8DesUJbQSEeFtRJ6lA98hLvX8zZtkLTsXaN+tk+hgOmLt5qxsNrMueeAegshgwXuiqZGw==',
   ),
   3 => 
   array (
@@ -35,7 +35,7 @@ return array (
     'key' => 'k',
     'cipher' => NULL,
     'mode' => NULL,
-    'encoded' => 'yKR07QnG92tneqrI+9GUyF01HaGy/3QA/QACMJRMGhEF0URFfkm86F6oBOV6rueskfEBJxmfd3J3m7fc2R40xBcZ7z9jxitG2cwWXvs73PshG1C1baShQBV0EsgFI17ek++51XtahOhoHxGwbpxtjQ9Pfbt8mfIwKigVyEyoeGuc0NAtgy/dySWOvn14VLJbEiyWOOehWgk6DVzv3h3D/7ozbgtShiVGQKfUrrjF5H49du2uX3g9v12sO1qiBUIlLG5P7swddg6wIMaaaxq8LCxJutXw1xHxBbVFwpq/IGzkTxkcMGjZRQGxlxAyRT2KMTy0laSu+iTdST9PECWm8F7uVYxDmFb5Q1sT8YU7YXcWLt2vMu3obwy73N8SAC2UYiEoGBJ1b8kbBoej9mr6+jL8pNIEk57Zd/tfkY385v/G6rGkGOGIvBigtMDGnOvcbhdWMFRZRGpWSXuuNpjE8EtU8KWnSRncFef3HAWQP4xzxtQAJV9xud5UGhiNqitObI4wY//falgQxKwXJwNhmpyj+2CtadzwWjjP6G4f5jjtqjtvgeSJhDTeJ6EU+vHG/GCioIwFLjh+hCt8DwdSHQKG+yhz6+MLGB0UF5TFu+jH04OyU7+chISDY8oHBLtchR+hGIiXAVby6ayM6LYioN/kIOMHwsG5n+mwYebdEUN25LoRlbviDREVKuwmPBVPjGfdRmd+9+djCZgAi+Qg6I4I6oExS2790JaqWSRVe0VpvsYwxJSSMCAAO+toRgUr2VB9eswdFjfyPT2UbbleJjvXmXUU1ztdN3n6OU5BNpu+5J1qAXmooKdUgl5tjXDKa39qviveUokWLKU/DeG0oV/cJ6I/q9aco005ZjwmX7Rpo4QMNjUMEsIJtTeTrOJz',
+    'encoded' => 'AXHY+s6I5qFGUEfE6Z83jMqpDUz77KI9/YujHDV9Ez49AwVl0bH9BNLyHXBY04u99Ayq8TbYERwfVVlJBYSaAni0/457zH5MhpULaYDqVdtliaiYhprrYs85YrmAHLeQWL3TgTRZScKBb3FxWuzpZf0xaiAqocYtwIP/fZSNlQaTPxUCzKHCmIwNyAOTZcpQazbB81v0vZS0Xs4qo9x7lMHgZSmU6s8M2OBreVr+QlcGUdBfQ4ir+rmjPueFEMqjyi8odjyVGITKbI/ZCx3osAfu6Gu5GZanc6fjNn3qtbH+QrsUuwAdi04iGXhwWezr0O5vT6Z4geWrteCI8bnoUfh9lI/xC9rQJt2zJWZoog3ZWDCbnEY50qTzx4+g24m8kdFxGtVn9fsNd7PJvpDTfEMFDKhRkyrJCECCTPkO2cWK8p9OeUHRFyTqzqY7fh7PGaB7rYon/DOQicdpe5XmFB2EH8n8q5FjkLcBGrDRuV+7JED3xnLkWp37cF6sSBUvtKzN7JPMV4tGkKjyhuqmu/TLQLhKxjZ37ER9zM9vo2gFXMaT18EmfenLgq5nHs+AhaxI6AX8BkpUCj+oDwlWgCDWtGTyqXLnTPlOOeRZ9IyoPnTSOE3aakXP0jnsgLzk4YML5qQ6jDjmHkFJTKfMPQg55Umkx19fh7RqTYSIhc5JZhDCu3sZCUKKelTatROEAgDPqMM7aF++gRleBBBhJyBKi5/JyO3Va3XHB0RWMNEpVk1nsHiFpEouNFCQugqTFtSGQghNFQl/LZvT+HAIbWGYMaUvEBRlTFSkMSMBqxArzT+IP1kRbVgBQ4dP5c/0x+TYG5nmLUy8Ky0mBTpo55S992E1vwK+kZ//qNu6yXdMbGkAS1Mdnpg/oxHyWtLl',
   ),
   4 => 
   array (
@@ -44,7 +44,7 @@ return array (
     'key' => 'bf-key',
     'cipher' => 'blowfish',
     'mode' => 'cbc',
-    'encoded' => 'U/LNi/b37Fr0E/l4ZQsj757O9efmesJQ',
+    'encoded' => 'MDoxKUDS67gsKAnpJ027qjydhcv7Oe2+',
   ),
   5 => 
   array (
@@ -53,15 +53,69 @@ return array (
     'key' => 'aes-key',
     'cipher' => 'rijndael-128',
     'mode' => 'cfb',
-    'encoded' => 'ZKYbMnGl5ds8dnqrRXi+2fkRTrKH10g7JZVxDcbP',
+    'encoded' => 'rsHJR6t9XBkmHxXRgp7zbDK70Lbvo0+WslYMEtAp',
   ),
   6 => 
+  array (
+    'name' => 'rijndael-128 cbc',
+    'plain' => 'AES 128 block, CBC, NUL padded text',
+    'key' => 'aes-cbc-key',
+    'cipher' => 'rijndael-128',
+    'mode' => 'cbc',
+    'encoded' => 'sdScewPHhj/jD7KMDnnnSiJQC0QnVCeFdK5m5OPIse+jEG81E/lNKAazxnsuQwcHfOhZYbPGEzktlvs0CTo4Tg==',
+  ),
+  7 => 
+  array (
+    'name' => 'rijndael-128 cbc, block multiple',
+    'plain' => '0123456789abcdef0123456789abcdef',
+    'key' => 'aes-cbc-key',
+    'cipher' => 'rijndael-128',
+    'mode' => 'cbc',
+    'encoded' => 'KXXWE/uAsx0vk/BInjU8LR9blrdaSS/hfkOcTE9gIXJwVU7ynb8HU+mOReY2HP1P',
+  ),
+  8 => 
+  array (
+    'name' => 'rijndael-128 ecb',
+    'plain' => 'AES 128 block in ECB mode',
+    'key' => 'aes-ecb-key',
+    'cipher' => 'rijndael-128',
+    'mode' => 'ecb',
+    'encoded' => 'XvoiNky2xTDlaLjbuguKkIJjIYT2TfTJesUSgA8HaMqkAJoi/HXBHtGhzM7/2TVf',
+  ),
+  9 => 
+  array (
+    'name' => 'rijndael-128 ncfb',
+    'plain' => 'AES full-block CFB payload',
+    'key' => 'aes-ncfb-key',
+    'cipher' => 'rijndael-128',
+    'mode' => 'ncfb',
+    'encoded' => 'LE3szFGvLELl5MxhHJqfMUMlUuhXruaVlB7cR92Foe76zLbS7pNlHrbk',
+  ),
+  10 => 
+  array (
+    'name' => 'rijndael-128 nofb',
+    'plain' => 'AES full-block OFB payload',
+    'key' => 'aes-nofb-key',
+    'cipher' => 'rijndael-128',
+    'mode' => 'nofb',
+    'encoded' => 'ukP1vXNj9kh2eK6m7670eKEAEcDrughKIgIfmDLJ+eYGQgn5sBySGAZg',
+  ),
+  11 => 
+  array (
+    'name' => 'rijndael-128 cbc, utf-8',
+    'plain' => 'Café 日本',
+    'key' => 'ключ',
+    'cipher' => 'rijndael-128',
+    'mode' => 'cbc',
+    'encoded' => 'bNxTgOdpmXdMRn43kprSk0JKdVMgo4ZQbb+rN9+Obks=',
+  ),
+  12 => 
   array (
     'name' => 'rijndael-256 ecb',
     'plain' => 'ECB mode payload',
     'key' => 'ecb-key',
     'cipher' => 'rijndael-256',
     'mode' => 'ecb',
-    'encoded' => 'mi5bHAPnZNKqHycFFxXs+DCtm4eE4L9gFv2sTWg6O97fyO5PeX0ptTJEwedjHwYxgYfVkD5oYV+gGDiok0UzmQ==',
+    'encoded' => 'Nl0hfi1Ki9eds3yNcZaelZY2JF598Wkn3kJp/TEjgRjfyO5PeX0ptTJEwedjHwYxgYfVkD5oYV+gGDiok0UzmQ==',
   ),
 );

@@ -34,11 +34,18 @@ sort($cases);
 if ($opt['file'] === NULL && $opt['isolate'])
 {
 	$tot = array('pass' => 0, 'fail' => 0, 'skip' => 0);
+	$timeout = '';
+	exec('command -v timeout 2>/dev/null', $tmp, $tmp_code);
+	if ($tmp_code === 0)
+	{
+		$timeout = 'timeout 240 ';
+	}
 	$report = '';
 	foreach ($cases as $file)
 	{
 		$name = basename($file, '.php');
-		$cmd = escapeshellarg(PHP_BINARY).' -d xdebug.mode=off -d memory_limit=512M '.escapeshellarg(__FILE__)
+		// a runaway test (e.g. an endless loop) must not hang the whole run
+		$cmd = $timeout.escapeshellarg(PHP_BINARY).' -d xdebug.mode=off -d memory_limit=512M '.escapeshellarg(__FILE__)
 			.' --file='.escapeshellarg($name).($opt['filter'] !== NULL ? ' --filter='.escapeshellarg($opt['filter']) : '').' 2>&1';
 		$out = array();
 		exec($cmd, $out, $code);
@@ -62,7 +69,7 @@ if ($opt['file'] === NULL && $opt['isolate'])
 			// the child never reached the end of its run
 			$tot['fail']++;
 			echo 'A';
-			$report .= "--- ".$name." ---\nABORT  the process ended before reporting results (exit code ".$code.")\n".substr($text, -800)."\n\n";
+			$report .= "--- ".$name." ---\n".($code === 124 ? 'TIMEOUT  the case file did not finish within 240 seconds' : 'ABORT  the process ended before reporting results (exit code '.$code.')')."\n".substr($text, -800)."\n\n";
 		}
 	}
 	echo "\n\n".$report;

@@ -34,8 +34,10 @@ function _rows($db, $sql)
 test('database: the factory resolves every bundled driver class without connecting', function ()
 {
 	$CI = get_instance();
+	// 'mysql' resolves to mysqli when the removed mysql extension is missing (PHP 7+)
+	$mysql_driver = function_exists('mysql_connect') ? 'mysql' : 'mysqli';
 	$expected = array(
-		'mysql' => 'CI_DB_mysql_driver', 'mysqli' => 'CI_DB_mysqli_driver', 'postgre' => 'CI_DB_postgre_driver',
+		'mysql' => 'CI_DB_'.$mysql_driver.'_driver', 'mysqli' => 'CI_DB_mysqli_driver', 'postgre' => 'CI_DB_postgre_driver',
 		'odbc' => 'CI_DB_odbc_driver', 'mssql' => 'CI_DB_mssql_driver',
 		'sqlsrv' => 'CI_DB_sqlsrv_driver', 'sqlite' => 'CI_DB_sqlite_driver', 'pdo' => 'CI_DB_pdo_driver',
 	);
@@ -47,7 +49,7 @@ test('database: the factory resolves every bundled driver class without connecti
 			'stricton' => FALSE), TRUE);
 		assert_instance($class, $db, $driver);
 		assert_instance('CI_DB_active_record', $db, $driver);
-		assert_same($driver, $db->dbdriver, $driver);
+		assert_same($driver === 'mysql' ? $mysql_driver : $driver, $db->dbdriver, $driver);
 	}
 });
 
