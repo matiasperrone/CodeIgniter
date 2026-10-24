@@ -1,4 +1,4 @@
-# CodeIgniter 2
+# CodeIgniter 2 (Fork with PHP 8.x support)
 
 Open Source PHP Framework (originally from EllisLab)
 
